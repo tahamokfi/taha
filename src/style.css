@@ -62,6 +62,7 @@
 }
 
 * { box-sizing: border-box; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
@@ -376,6 +377,25 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   font-family: var(--mono);
   font-size: 13px;
   color: var(--muted);
+}
+
+/* ---------- desktop: a roomier table, sized to sit just shorter than the card beside it ---------- */
+@media (min-width: 1001px) {
+  .caption { font-size: 16px; margin-bottom: 22px; }
+  .cols-head { padding-bottom: 12px; font-size: 12px; }
+  .row-head { padding-block: 19px; }
+  .overall { padding-block: 20px; }
+  .logo { width: 40px; height: 40px; border-radius: 10px; }
+  .logo.mono { font-size: 22px; }
+  .logo.site { font-size: 16px; }
+  .c-where { gap: 14px; }
+  .org { font-size: 17px; }
+  .meta { font-size: 14px; }
+  .c-role, .overall .c-role { font-size: 17.5px; }
+  .row-head .c-result, .overall .c-result { font-size: 15px; }
+  .detail-in p { font-size: 16.5px; padding-bottom: 20px; }
+  .ticks { height: 32px; }
+  .tick, .ends { font-size: 12.5px; }
 }
 
 /* ---------- tablets: card on top, table full width ---------- */
