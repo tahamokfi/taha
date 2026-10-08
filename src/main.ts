@@ -82,9 +82,24 @@ const places = map ? Array.from(map.querySelectorAll<SVGGElement>('.place')) : [
 const narrow = matchMedia('(max-width: 1000px)');
 let current: HTMLElement | null = null;
 
+// The route, in order. Opening a row traces it from Tehran up to that row's city,
+// one arrow per move, each drawn after the one before.
+const route = ['tehran', 'orlando', 'hartford', 'nyc'];
+const legs = map ? Array.from(map.querySelectorAll<SVGGElement>('.leg')) : [];
+
 function showPlace(row: HTMLElement | null) {
   const place = row?.dataset.place ?? 'nyc';
-  for (const g of places) g.classList.toggle('active', g.dataset.place === place);
+  const step = row ? route.indexOf(place) : -1;
+  for (const g of places) {
+    const at = route.indexOf(g.dataset.place ?? '');
+    g.classList.toggle('active', g.dataset.place === place);
+    g.classList.toggle('visited', at >= 0 && at < step);
+  }
+  for (const leg of legs) {
+    const n = Number(leg.dataset.leg);
+    leg.classList.toggle('on', n <= step);
+    leg.style.setProperty('--d', `${(n - 1) * 0.45}s`);
+  }
   if (mapCaption) {
     const org = row?.querySelector('.org')?.textContent;
     const meta = row?.querySelector('.meta')?.textContent;
