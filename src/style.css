@@ -190,9 +190,15 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .place[data-place="nyc"] .dot { transform-box: fill-box; transform-origin: center; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), fill 0.25s; }
 .map[data-depth="2"] .halo-2, .map[data-depth="3"] .halo-2 { opacity: 0.25; transform: none; }
 .map[data-depth="3"] .halo-3 { opacity: 0.12; transform: none; }
-.map[data-depth="2"] .place[data-place="nyc"] .dot { transform: scale(1.35); }
-.map[data-depth="3"] .place[data-place="nyc"] .dot { transform: scale(1.75); }
-.map[data-depth="3"] .place[data-place="nyc"] .label { font-size: 18px; }
+/* the Big Apple: from HelloFresh on, New York's dot becomes an apple that pops in, and grows again for Confyde */
+.apple { transform-box: fill-box; transform-origin: center; transform: scale(0); opacity: 0; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s; }
+.apple-body { fill: var(--accent); }
+.apple-stem { fill: none; stroke: var(--ink); stroke-width: 0.9; stroke-linecap: round; }
+.apple-leaf { fill: var(--ink); }
+.map[data-depth="2"] .apple { transform: scale(1.15); opacity: 1; }
+.map[data-depth="3"] .apple { transform: scale(1.75); opacity: 1; }
+.map[data-depth="2"] .place[data-place="nyc"] .dot, .map[data-depth="3"] .place[data-place="nyc"] .dot { transform: scale(0); }
+.map[data-depth="3"] .place[data-place="nyc"] .label { font-size: 18px; transform: translateX(-5px); }
 /* earlier stops on the route keep a solid dot and a quieter label */
 .place.visited .dot { fill: var(--accent); }
 .place.visited .label { opacity: 0.75; font-weight: 600; }
