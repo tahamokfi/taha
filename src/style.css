@@ -113,7 +113,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   position: sticky;
   top: 20px;
   display: grid;
-  gap: 18px;
+  gap: 14px;
   padding: 24px;
   border: 1px solid var(--rule);
   border-radius: 20px;
@@ -121,7 +121,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 /* LinkedIn only publishes the photo at 200px, so it is shown no larger than that to stay sharp */
 .photo {
-  width: 128px;
+  width: 88px;
   aspect-ratio: 1;
   max-width: 100%;
   border-radius: 16px;
@@ -164,7 +164,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 
 /* ---------- map: where each chapter happened ---------- */
 .map { margin: 0; padding-top: 16px; border-top: 1px solid var(--rule); display: grid; gap: 8px; }
-.map svg { display: block; width: 100%; height: auto; overflow: visible; }
+.map svg { display: block; width: 100%; height: auto; overflow: hidden; }
 .map .land { fill: var(--band); stroke: var(--muted); stroke-width: 0.7; stroke-linejoin: round; }
 .map .borders { fill: none; stroke: var(--rule); stroke-width: 0.6; stroke-linejoin: round; }
 [data-theme="dark"] .map .borders { stroke: #2c3546; }
@@ -184,7 +184,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 .map figcaption { font-family: var(--mono); font-size: 13px; color: var(--soft); }
 /* on narrow screens the map travels into the open row */
-.detail-in .map { grid-column: 1 / -1; border-top: 0; padding: 0 0 16px; max-width: 360px; }
+.detail-in .map { grid-column: 1 / -1; border-top: 0; padding: 0 0 16px; max-width: 320px; }
 .row.open .map .label { stroke: var(--band); }
 .row.open .map .land { fill: var(--surface); }
 
@@ -360,7 +360,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 
 .foot {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 8px 24px;
   margin-top: 32px;
@@ -380,8 +380,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
     grid-template-areas:
       "photo intro"
       "bio bio"
-      "links links"
-      "map map";
+      "links links";
     align-items: center;
     gap: 16px 20px;
   }
@@ -389,7 +388,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   .intro { grid-area: intro; }
   .bio { grid-area: bio; }
   .links { grid-area: links; }
-  .card > .map { grid-area: map; max-width: 420px; }
+  /* the card scrolls away on narrow screens, so the map only appears inside the open row */
+  .card > .map { display: none; }
   .photo { width: 112px; }
 }
 
