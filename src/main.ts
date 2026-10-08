@@ -7,6 +7,42 @@ inject();
 const root = document.documentElement;
 root.classList.add('js');
 
+// Light and dark mode. The inline script in index.html applies the theme before first paint;
+// here the toggle flips it, remembers the choice, and follows the system until one is made.
+type Theme = 'light' | 'dark';
+const systemDark = matchMedia('(prefers-color-scheme: dark)');
+const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
+const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+
+function storedTheme(): Theme | null {
+  try {
+    const value = localStorage.getItem('theme');
+    return value === 'light' || value === 'dark' ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function applyTheme(theme: Theme) {
+  root.dataset.theme = theme;
+  if (themeColor) themeColor.content = theme === 'dark' ? '#0a0d13' : '#f7f8fa';
+  toggle?.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+}
+
+applyTheme(storedTheme() ?? (systemDark.matches ? 'dark' : 'light'));
+toggle?.addEventListener('click', () => {
+  const next: Theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  try {
+    localStorage.setItem('theme', next);
+  } catch {
+    // private mode or blocked storage: the switch still works for this visit
+  }
+});
+systemDark.addEventListener('change', (e) => {
+  if (!storedTheme()) applyTheme(e.matches ? 'dark' : 'light');
+});
+
 // Keep "now" current so ongoing roles always run to today.
 const today = new Date();
 const now = today.getFullYear() + today.getMonth() / 12 + (today.getDate() - 1) / 365;

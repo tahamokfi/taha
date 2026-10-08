@@ -1,17 +1,22 @@
-/* One journal figure on a dark ground: title block, a career timeline drawn as a forest plot, a quiet footer. */
+/* One journal figure: title block, a career timeline drawn as a forest plot, a quiet footer.
+   Light and dark share every rule; only the tokens change. */
 :root {
-  color-scheme: dark;
-  --bg: #0a0d13;
-  --band: #121825;
-  --rule: #232b39;
-  --muted: #7c8698;
-  --soft: #b4bdcb;
-  --ink: #e9edf2;
-  --accent: #f0b648;
+  color-scheme: light;
+  --bg: #f7f8fa;
+  --band: #eceff4;
+  --rule: #dce1e8;
+  --muted: #646e80;
+  --soft: #3d4655;
+  --ink: #0f1522;
+  --bar: #9aa3b2;
+  --accent: #e0a030;      /* bars, diamond, logo square */
+  --accent-ink: #8a5806;  /* amber text, darker so it reads on white */
+  --tile: #ffffff;
+  --tile-line: #dfe3ea;
 
   --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
-  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --sans: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Atkinson Hyperlegible Mono", ui-monospace, Menlo, Consolas, monospace;
 
   /* timeline scale, in decimal years; main.ts keeps --now and --y1 current */
   --y0: 2011;
@@ -19,8 +24,38 @@
   --now: 2026.8;
   --span: calc(var(--y1) - var(--y0));
 
-  --cols: 64px minmax(140px, 190px) minmax(0, 1fr) minmax(180px, 28%) 108px;
+  --cols: 72px minmax(190px, 240px) minmax(0, 1fr) minmax(170px, 25%) 132px;
   --pad: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0a0d13;
+    --band: #121825;
+    --rule: #232b39;
+    --muted: #8a94a6;
+    --soft: #bfc7d3;
+    --ink: #edf0f4;
+    --bar: #a3adbd;
+    --accent: #f0b648;
+    --accent-ink: #f0b648;
+    --tile: #ffffff;
+    --tile-line: transparent;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0a0d13;
+  --band: #121825;
+  --rule: #232b39;
+  --muted: #8a94a6;
+  --soft: #bfc7d3;
+  --ink: #edf0f4;
+  --bar: #a3adbd;
+  --accent: #f0b648;
+  --accent-ink: #f0b648;
+  --tile: #ffffff;
+  --tile-line: transparent;
 }
 
 * { box-sizing: border-box; }
@@ -30,31 +65,61 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 17px;
+  line-height: 1.55;
   padding-inline: 20px;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s, color 0.3s;
 }
-a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 1px; }
-a:hover { color: var(--accent); }
+a { color: var(--ink); text-decoration: none; border-bottom: 1.5px solid var(--accent); padding-bottom: 1px; }
+a:hover { color: var(--accent-ink); }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .fig {
-  max-width: 1120px;
+  max-width: 1140px;
   margin: 0 auto;
-  padding-block: clamp(28px, 7vh, 80px) 32px;
+  padding-block: 20px 32px;
   display: grid;
-  gap: clamp(32px, 6vh, 56px);
+  gap: clamp(28px, 5vh, 48px);
   overflow-x: clip;
 }
+
+/* ---------- top bar: logo and theme switch ---------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; }
+.brand { display: inline-flex; align-items: center; gap: 10px; border: 0; padding: 0; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--soft); }
+.brand:hover { color: var(--ink); }
+.mark { width: 30px; height: 30px; flex: none; }
+.mark path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.mark rect { fill: var(--accent); }
+.brand .mark { color: var(--ink); }
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  visibility: hidden;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.js .theme-toggle { visibility: visible; }
+.theme-toggle:hover { border-color: var(--muted); background: var(--band); }
+.theme-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.i-sun { display: none; }
+[data-theme="dark"] .i-sun { display: block; }
+[data-theme="dark"] .i-moon { display: none; }
 
 /* ---------- title block ---------- */
 .name {
   margin: 0;
   font-family: var(--serif);
-  font-weight: 350;
+  font-weight: 380;
   font-size: clamp(48px, 12vw, 136px);
-  line-height: 0.88;
+  line-height: 0.9;
   letter-spacing: -0.03em;
   font-variation-settings: "opsz" 72;
   transform-origin: left center;
@@ -66,37 +131,30 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   to { filter: blur(0); opacity: 1; transform: none; }
 }
 .sub {
-  margin-top: 18px;
+  margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 10px 28px;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 17px;
 }
-.sub p { margin: 0; }
-.sub nav { display: flex; gap: 20px; }
+.sub p { margin: 0; color: var(--soft); }
+.sub nav { display: flex; gap: 22px; font-weight: 600; }
 .legend {
-  margin: 20px 0 0;
-  max-width: 64ch;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(17px, 1.7vw, 20px);
-  line-height: 1.45;
+  margin: 18px 0 0;
+  max-width: 62ch;
+  font-size: 18px;
+  line-height: 1.6;
   color: var(--soft);
 }
 .legend b {
   font-family: var(--mono);
-  font-style: normal;
   font-weight: 500;
-  font-size: 0.62em;
-  letter-spacing: 0.14em;
+  font-size: 13px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-ink);
   margin-right: 10px;
-  vertical-align: 0.15em;
 }
 
 /* ---------- plot grid ---------- */
@@ -111,8 +169,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   padding-bottom: 10px;
   border-bottom: 1px solid var(--rule);
   font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -126,7 +184,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .row-head {
   width: 100%;
   margin: 0;
-  padding-block: 15px;
+  padding-block: 14px;
   border: 0;
   background: none;
   color: inherit;
@@ -139,13 +197,32 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   .row-head:hover { background: var(--band); }
 }
 
-.c-years { font-family: var(--mono); font-size: 12px; color: var(--soft); font-variant-numeric: tabular-nums; }
-.c-where { display: flex; flex-direction: column; min-width: 0; font-family: var(--mono); text-transform: uppercase; }
-.org { font-size: 11px; letter-spacing: 0.08em; font-weight: 500; }
-.city { font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
-.c-role { min-width: 0; font-size: 16px; transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), color 0.25s; }
-.row-head .c-result { font-family: var(--mono); font-size: 12px; color: var(--soft); transition: color 0.25s; }
-.row[data-current] .c-result, .row.open .c-result { color: var(--accent); }
+.c-years { font-family: var(--mono); font-size: 14px; color: var(--soft); font-variant-numeric: tabular-nums; }
+.c-where { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.where-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.org { font-size: 16px; font-weight: 600; }
+.city { font-size: 14px; color: var(--muted); }
+.c-role { min-width: 0; font-size: 17px; transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), color 0.25s; }
+.row-head .c-result { font-family: var(--mono); font-size: 14px; color: var(--soft); transition: color 0.25s; }
+.row[data-current] .c-result, .row.open .c-result { color: var(--accent-ink); }
+
+/* company logos sit on a white tile in both themes, so every mark reads as designed */
+.logo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--tile);
+  box-shadow: inset 0 0 0 1px var(--tile-line);
+  overflow: hidden;
+}
+.logo img { width: 72%; height: 72%; object-fit: contain; }
+.logo.full img { width: 100%; height: 100%; object-fit: cover; }
+.logo.mono { font-family: var(--serif); font-size: 20px; font-weight: 500; line-height: 1; color: #0f1522; }
+.logo.site { background: var(--ink); box-shadow: none; }
+.logo.site .mark { width: 26px; height: 26px; color: var(--bg); }
 
 /* the timeline track and one bar per chapter */
 .c-time { position: relative; height: 20px; }
@@ -163,16 +240,16 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   top: 50%;
   left: calc((var(--s) - var(--y0)) / var(--span) * 100%);
   width: max(5px, calc((var(--e, var(--now)) - var(--s)) / var(--span) * 100%));
-  height: 4px;
-  border-radius: 2px;
-  background: var(--soft);
+  height: 5px;
+  border-radius: 3px;
+  background: var(--bar);
   transform: translateY(-50%);
   transition: height 0.3s, opacity 0.3s, background-color 0.3s;
 }
 .row[data-current] .bar { background: var(--accent); }
-.row.open .bar { height: 8px; }
+.row.open .bar { height: 9px; }
 .row.open:not([data-current]) .bar { background: var(--ink); }
-.has-active .row:not(.open) .bar { opacity: 0.28; }
+.has-active .row:not(.open) .bar { opacity: 0.3; }
 .has-active .row:not(.open) .c-role { color: var(--soft); }
 .row.open .c-role { transform: translateX(6px); }
 
@@ -182,9 +259,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   grid-column: 3 / 5;
   margin: 0;
   padding: 0 0 20px 6px;
-  max-width: 68ch;
-  font-size: 15px;
-  line-height: 1.6;
+  max-width: 66ch;
+  font-size: 16px;
+  line-height: 1.65;
   color: var(--soft);
 }
 .js .detail {
@@ -202,10 +279,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .js .row.open .detail-in p { opacity: 1; transform: none; transition-delay: 0.06s; }
 
 /* overall: the whole span, drawn as the pooled diamond */
-.overall { padding-block: 18px; border-bottom: 1px solid var(--rule); }
-.overall .org { color: var(--accent); }
-.overall .c-role { font-size: 16px; }
-.overall .c-result { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.overall { padding-block: 16px; border-bottom: 1px solid var(--rule); }
+.overall .org { color: var(--accent-ink); }
+.overall .c-role { font-size: 17px; font-weight: 600; }
+.overall .c-result { font-family: var(--mono); font-size: 14px; color: var(--accent-ink); }
 .diamond {
   position: absolute;
   top: 50%;
@@ -218,7 +295,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 
 /* time axis, Tehran to New York */
-.axis { padding-top: 0; }
 .axis .c-time { grid-column: 4; height: auto; }
 .ticks { position: relative; display: block; height: 30px; border-top: 1px solid var(--muted); }
 .tick {
@@ -228,7 +304,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   transform: translateX(-50%);
   padding-top: 9px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 .tick::before { content: ""; position: absolute; top: 0; left: 50%; width: 1px; height: 5px; background: var(--muted); }
@@ -236,8 +312,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   display: flex;
   justify-content: space-between;
   font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--soft);
 }
@@ -248,9 +324,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   flex-wrap: wrap;
   gap: 8px 24px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 13px;
   color: var(--muted);
 }
 
@@ -260,16 +334,18 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   :root { --pad: 4px; }
   .cols-head { display: none; }
   .row-head, .overall {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      "years where result"
-      "role role role"
-      "time time time";
-    row-gap: 6px;
+      "where result"
+      "role years"
+      "time time";
+    row-gap: 8px;
     column-gap: 12px;
   }
-  .c-years { grid-area: years; }
-  .c-where { grid-area: where; flex-direction: row; flex-wrap: wrap; gap: 0 8px; align-items: baseline; }
+  .c-years { grid-area: years; justify-self: end; font-size: 13px; color: var(--muted); }
+  .c-where { grid-area: where; gap: 10px; }
+  .where-text { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+  .logo { width: 30px; height: 30px; border-radius: 8px; }
   .c-role { grid-area: role; }
   .c-time { grid-area: time; height: 14px; }
   .c-result { grid-area: result; }
