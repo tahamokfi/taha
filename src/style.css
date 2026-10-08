@@ -1,3 +1,10 @@
+/* Fonts are served from this site: Latin only, just the weights the page uses (OFL, licences in /fonts). */
+@font-face { font-family: "Newsreader"; src: url("/fonts/newsreader-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Atkinson Hyperlegible Next"; src: url("/fonts/atkinson-next-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Atkinson Hyperlegible Next"; src: url("/fonts/atkinson-next-600.woff2") format("woff2"); font-weight: 600 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Atkinson Hyperlegible Mono"; src: url("/fonts/atkinson-mono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Atkinson Hyperlegible Mono"; src: url("/fonts/atkinson-mono-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+
 /* Profile card on the left, career timeline (a forest plot) on the right; one column on phones.
    Light and dark share every rule; only the tokens change. */
 :root {
@@ -142,15 +149,16 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   letter-spacing: -0.025em;
   font-variation-settings: "opsz" 72;
   transform-origin: left center;
-  animation: converge 1.6s cubic-bezier(0.16, 0.8, 0.2, 1) both;
+  animation: converge 0.9s cubic-bezier(0.16, 0.8, 0.2, 1) both;
 }
 /* blur and stretch only, so the name never reflows while it settles */
 @keyframes converge {
-  from { filter: blur(12px); opacity: 0.25; transform: scaleX(1.1); }
+  from { filter: blur(8px); opacity: 0.5; transform: scaleX(1.06); }
   to { filter: blur(0); opacity: 1; transform: none; }
 }
 .facts { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; color: var(--soft); }
 .facts strong { color: var(--ink); font-weight: 600; }
+.facts a { border-bottom-width: 1.5px; }
 .bio { margin: 0; color: var(--soft); line-height: 1.55; }
 .links { display: flex; flex-wrap: wrap; gap: 8px; }
 .links a {
@@ -171,12 +179,20 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 [data-theme="dark"] .map .borders { stroke: #2c3546; }
 .place .dot { fill: var(--muted); transition: fill 0.25s; }
 .place .pulse { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
-.place .label { font-family: var(--sans); font-size: 16px; font-weight: 700; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; opacity: 0; transition: opacity 0.25s; }
+.place .label { font-family: var(--sans); font-size: 16px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; opacity: 0; transition: opacity 0.25s; }
 .place.active .dot { fill: var(--accent); }
 .place.active .pulse { animation: pulse 1.8s ease-out infinite; }
 .place.active .label { opacity: 1; }
 .place.away .label { opacity: 0.55; fill: var(--muted); }
 .place.away.active .label { opacity: 1; fill: var(--accent-ink); }
+/* New York grows with each chapter there: CVS, then HelloFresh (halo), then Confyde (bigger, wider halo) */
+.place .halo { fill: var(--accent); opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(0.3); transition: opacity 0.4s, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.place[data-place="nyc"] .dot { transform-box: fill-box; transform-origin: center; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), fill 0.25s; }
+.map[data-depth="2"] .halo-2, .map[data-depth="3"] .halo-2 { opacity: 0.25; transform: none; }
+.map[data-depth="3"] .halo-3 { opacity: 0.12; transform: none; }
+.map[data-depth="2"] .place[data-place="nyc"] .dot { transform: scale(1.35); }
+.map[data-depth="3"] .place[data-place="nyc"] .dot { transform: scale(1.75); }
+.map[data-depth="3"] .place[data-place="nyc"] .label { font-size: 18px; }
 /* earlier stops on the route keep a solid dot and a quieter label */
 .place.visited .dot { fill: var(--accent); }
 .place.visited .label { opacity: 0.75; font-weight: 600; }
@@ -267,8 +283,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 .logo img { width: 72%; height: 72%; object-fit: contain; }
 .logo.full img { width: 100%; height: 100%; object-fit: cover; }
-.logo.mono { font-family: var(--serif); font-size: 19px; font-weight: 500; line-height: 1; color: #0f1522; }
-.logo.site { background: var(--ink); box-shadow: none; color: var(--bg); font-family: var(--serif); font-size: 14px; font-weight: 500; letter-spacing: -0.02em; }
+.logo.mono { font-family: var(--serif); font-size: 19px; font-weight: 400; line-height: 1; color: #0f1522; }
+.logo.site { background: var(--ink); box-shadow: none; color: var(--bg); font-family: var(--serif); font-size: 14px; font-weight: 400; letter-spacing: -0.02em; }
 
 /* the timeline track and one bar per chapter */
 .c-time { position: relative; height: 18px; }
@@ -381,10 +397,11 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 
 /* ---------- desktop: a roomier table, sized to sit just shorter than the card beside it ---------- */
 @media (min-width: 1001px) {
+  :root { --cols: minmax(175px, 205px) minmax(0, 1fr) minmax(120px, 21%) 132px; }
   .caption { font-size: 16px; margin-bottom: 22px; }
   .cols-head { padding-bottom: 12px; font-size: 12px; }
-  .row-head { padding-block: 19px; }
-  .overall { padding-block: 20px; }
+  .row-head { padding-block: 21px; }
+  .overall { padding-block: 22px; }
   .logo { width: 40px; height: 40px; border-radius: 10px; }
   .logo.mono { font-size: 22px; }
   .logo.site { font-size: 16px; }

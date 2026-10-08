@@ -90,6 +90,8 @@ const legs = map ? Array.from(map.querySelectorAll<SVGGElement>('.leg')) : [];
 function showPlace(row: HTMLElement | null) {
   const place = row?.dataset.place ?? 'nyc';
   const step = row ? route.indexOf(place) : -1;
+  // New York's marker grows with each chapter there (CVS 1, HelloFresh 2, Confyde 3)
+  if (map) map.dataset.depth = row?.dataset.depth ?? '0';
   for (const g of places) {
     const at = route.indexOf(g.dataset.place ?? '');
     g.classList.toggle('active', g.dataset.place === place);
