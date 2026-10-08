@@ -78,26 +78,13 @@ a { color: var(--ink); text-decoration: none; border-bottom: 1.5px solid var(--a
 a:hover { color: var(--accent-ink); }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-.page { max-width: 1180px; margin: 0 auto; padding-block: 18px 28px; overflow-x: clip; }
+.page { max-width: 1180px; margin: 0 auto; padding-block: clamp(20px, 5vh, 48px) 28px; overflow-x: clip; }
 
-/* ---------- top bar: monogram and theme switch ---------- */
-.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
-.brand { display: inline-flex; align-items: center; gap: 10px; border: 0; padding: 0; font-family: var(--mono); font-size: 13px; color: var(--soft); }
-.brand:hover { color: var(--ink); }
-.monogram {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  background: var(--ink);
-  color: var(--bg);
-  font-family: var(--serif);
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-}
+/* ---------- theme switch, in the top-right corner of the card ---------- */
 .theme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
   display: grid;
   place-items: center;
   width: 38px;
@@ -119,7 +106,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 [data-theme="dark"] .i-moon { display: none; }
 
 /* ---------- two columns ---------- */
-.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 48px; align-items: start; }
+.layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 44px; align-items: start; }
 
 /* ---------- profile card ---------- */
 .card {
@@ -174,6 +161,32 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   transition: border-color 0.2s, background-color 0.2s;
 }
 .links a:hover { border-color: var(--accent); background: var(--band); color: var(--ink); }
+
+/* ---------- map: where each chapter happened ---------- */
+.map { margin: 0; padding-top: 16px; border-top: 1px solid var(--rule); display: grid; gap: 8px; }
+.map svg { display: block; width: 100%; height: auto; overflow: visible; }
+.map .land { fill: var(--band); stroke: var(--muted); stroke-width: 0.7; stroke-linejoin: round; }
+.map .borders { fill: none; stroke: var(--rule); stroke-width: 0.6; stroke-linejoin: round; }
+[data-theme="dark"] .map .borders { stroke: #2c3546; }
+.place .dot { fill: var(--muted); transition: fill 0.25s; }
+.place .pulse { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.place .label { font-family: var(--sans); font-size: 16px; font-weight: 700; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; opacity: 0; transition: opacity 0.25s; }
+.place.active .dot { fill: var(--accent); }
+.place.active .pulse { animation: pulse 1.8s ease-out infinite; }
+.place.active .label { opacity: 1; }
+.place.away .label { opacity: 0.55; fill: var(--muted); }
+.place.away.active .label { opacity: 1; fill: var(--accent-ink); }
+.place .route { fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 3 3; opacity: 0; transition: opacity 0.25s; }
+.place.active .route { opacity: 1; }
+@keyframes pulse {
+  from { transform: scale(1); opacity: 0.9; }
+  to { transform: scale(3.6); opacity: 0; }
+}
+.map figcaption { font-family: var(--mono); font-size: 13px; color: var(--soft); }
+/* on narrow screens the map travels into the open row */
+.detail-in .map { grid-column: 1 / -1; border-top: 0; padding: 0 0 16px; max-width: 360px; }
+.row.open .map .label { stroke: var(--band); }
+.row.open .map .land { fill: var(--surface); }
 
 /* ---------- plot ---------- */
 .caption { margin: 0 0 14px; font-size: 15px; color: var(--soft); }
@@ -362,12 +375,13 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 @media (max-width: 1000px) {
   .layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .card {
-    position: static;
+    position: relative;
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
       "photo intro"
       "bio bio"
-      "links links";
+      "links links"
+      "map map";
     align-items: center;
     gap: 16px 20px;
   }
@@ -375,6 +389,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   .intro { grid-area: intro; }
   .bio { grid-area: bio; }
   .links { grid-area: links; }
+  .card > .map { grid-area: map; max-width: 420px; }
   .photo { width: 112px; }
 }
 
@@ -382,7 +397,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 @media (max-width: 640px) {
   body { padding-inline: 14px; }
   :root { --pad: 4px; }
-  .topbar { margin-bottom: 18px; }
   .card { grid-template-columns: 84px minmax(0, 1fr); padding: 16px; gap: 14px 16px; border-radius: 16px; }
   .photo { width: 84px; border-radius: 12px; }
   .name { font-size: 34px; }

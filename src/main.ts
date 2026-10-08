@@ -73,14 +73,40 @@ let pinned: HTMLElement | null = null;
 let hovered: HTMLElement | null = null;
 let timer = 0;
 
+// The map lights up where the open chapter happened (New York when none is open).
+// On narrow screens the card scrolls away, so the map moves into the open row instead.
+const map = document.getElementById('map');
+const mapHome = map?.parentElement ?? null;
+const mapCaption = document.getElementById('map-caption');
+const places = map ? Array.from(map.querySelectorAll<SVGGElement>('.place')) : [];
+const narrow = matchMedia('(max-width: 1000px)');
+let current: HTMLElement | null = null;
+
+function showPlace(row: HTMLElement | null) {
+  const place = row?.dataset.place ?? 'nyc';
+  for (const g of places) g.classList.toggle('active', g.dataset.place === place);
+  if (mapCaption) {
+    const org = row?.querySelector('.org')?.textContent;
+    const meta = row?.querySelector('.meta')?.textContent;
+    mapCaption.textContent = org && meta ? `${org} · ${meta}` : 'New York · now';
+  }
+  const target = narrow.matches && row ? row.querySelector('.detail-in') : mapHome;
+  if (map && target && map.parentElement !== target) target.append(map);
+}
+
 function open(row: HTMLElement | null) {
+  current = row;
   for (const r of rows) {
     const isOpen = r === row;
     r.classList.toggle('open', isOpen);
     r.querySelector('.row-head')?.setAttribute('aria-expanded', String(isOpen));
   }
   list?.classList.toggle('has-active', row !== null);
+  showPlace(row);
 }
+
+showPlace(null);
+narrow.addEventListener('change', () => showPlace(current));
 
 function later(fn: () => void, ms: number) {
   clearTimeout(timer);
