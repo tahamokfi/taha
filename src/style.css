@@ -1,0 +1,284 @@
+/* One journal figure on a dark ground: title block, a career timeline drawn as a forest plot, a quiet footer. */
+:root {
+  color-scheme: dark;
+  --bg: #0a0d13;
+  --band: #121825;
+  --rule: #232b39;
+  --muted: #7c8698;
+  --soft: #b4bdcb;
+  --ink: #e9edf2;
+  --accent: #f0b648;
+
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  /* timeline scale, in decimal years; main.ts keeps --now and --y1 current */
+  --y0: 2011;
+  --y1: 2027;
+  --now: 2026.8;
+  --span: calc(var(--y1) - var(--y0));
+
+  --cols: 64px minmax(140px, 190px) minmax(0, 1fr) minmax(180px, 28%) 108px;
+  --pad: 12px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  padding-inline: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 1px; }
+a:hover { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.fig {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-block: clamp(28px, 7vh, 80px) 32px;
+  display: grid;
+  gap: clamp(32px, 6vh, 56px);
+  overflow-x: clip;
+}
+
+/* ---------- title block ---------- */
+.name {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 350;
+  font-size: clamp(48px, 12vw, 136px);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  font-variation-settings: "opsz" 72;
+  transform-origin: left center;
+  animation: converge 1.8s cubic-bezier(0.16, 0.8, 0.2, 1) both;
+}
+/* blur and stretch only, so the name never reflows while it settles */
+@keyframes converge {
+  from { filter: blur(14px); opacity: 0.25; transform: scaleX(1.12); }
+  to { filter: blur(0); opacity: 1; transform: none; }
+}
+.sub {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 28px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.sub p { margin: 0; }
+.sub nav { display: flex; gap: 20px; }
+.legend {
+  margin: 20px 0 0;
+  max-width: 64ch;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(17px, 1.7vw, 20px);
+  line-height: 1.45;
+  color: var(--soft);
+}
+.legend b {
+  font-family: var(--mono);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 0.62em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-right: 10px;
+  vertical-align: 0.15em;
+}
+
+/* ---------- plot grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: var(--cols);
+  column-gap: 20px;
+  align-items: center;
+  padding-inline: var(--pad);
+}
+.cols-head {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.c-result { text-align: right; }
+.cols-head .c-time { height: auto; }
+
+.chapters { list-style: none; margin: 0; padding: 0; }
+.row { border-bottom: 1px solid var(--rule); transition: background-color 0.25s; }
+.row.open { background: var(--band); }
+
+.row-head {
+  width: 100%;
+  margin: 0;
+  padding-block: 15px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.row-head:focus-visible { outline-offset: -2px; }
+@media (hover: hover) {
+  .row-head:hover { background: var(--band); }
+}
+
+.c-years { font-family: var(--mono); font-size: 12px; color: var(--soft); font-variant-numeric: tabular-nums; }
+.c-where { display: flex; flex-direction: column; min-width: 0; font-family: var(--mono); text-transform: uppercase; }
+.org { font-size: 11px; letter-spacing: 0.08em; font-weight: 500; }
+.city { font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
+.c-role { min-width: 0; font-size: 16px; transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), color 0.25s; }
+.row-head .c-result { font-family: var(--mono); font-size: 12px; color: var(--soft); transition: color 0.25s; }
+.row[data-current] .c-result, .row.open .c-result { color: var(--accent); }
+
+/* the timeline track and one bar per chapter */
+.c-time { position: relative; height: 20px; }
+.row-head .c-time::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--rule);
+}
+.bar {
+  position: absolute;
+  top: 50%;
+  left: calc((var(--s) - var(--y0)) / var(--span) * 100%);
+  width: max(5px, calc((var(--e, var(--now)) - var(--s)) / var(--span) * 100%));
+  height: 4px;
+  border-radius: 2px;
+  background: var(--soft);
+  transform: translateY(-50%);
+  transition: height 0.3s, opacity 0.3s, background-color 0.3s;
+}
+.row[data-current] .bar { background: var(--accent); }
+.row.open .bar { height: 8px; }
+.row.open:not([data-current]) .bar { background: var(--ink); }
+.has-active .row:not(.open) .bar { opacity: 0.28; }
+.has-active .row:not(.open) .c-role { color: var(--soft); }
+.row.open .c-role { transform: translateX(6px); }
+
+/* detail opens under the role; without JavaScript it simply stays open */
+.detail-in { min-height: 0; overflow: hidden; }
+.detail-in p {
+  grid-column: 3 / 5;
+  margin: 0;
+  padding: 0 0 20px 6px;
+  max-width: 68ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--soft);
+}
+.js .detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 0.34s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s linear 0.34s;
+}
+.js .row.open .detail {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 0.34s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s;
+}
+.js .detail-in p { opacity: 0; transform: translateY(-6px); transition: opacity 0.25s, transform 0.3s; }
+.js .row.open .detail-in p { opacity: 1; transform: none; transition-delay: 0.06s; }
+
+/* overall: the whole span, drawn as the pooled diamond */
+.overall { padding-block: 18px; border-bottom: 1px solid var(--rule); }
+.overall .org { color: var(--accent); }
+.overall .c-role { font-size: 16px; }
+.overall .c-result { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.diamond {
+  position: absolute;
+  top: 50%;
+  left: calc((var(--s) - var(--y0)) / var(--span) * 100%);
+  width: calc((var(--now) - var(--s)) / var(--span) * 100%);
+  height: 10px;
+  background: var(--accent);
+  transform: translateY(-50%);
+  clip-path: polygon(0 50%, 50% 0, 100% 50%, 50% 100%);
+}
+
+/* time axis, Tehran to New York */
+.axis { padding-top: 0; }
+.axis .c-time { grid-column: 4; height: auto; }
+.ticks { position: relative; display: block; height: 30px; border-top: 1px solid var(--muted); }
+.tick {
+  position: absolute;
+  top: 0;
+  left: calc((var(--t) - var(--y0)) / var(--span) * 100%);
+  transform: translateX(-50%);
+  padding-top: 9px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+.tick::before { content: ""; position: absolute; top: 0; left: 50%; width: 1px; height: 5px; background: var(--muted); }
+.ends {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- phones and narrow windows ---------- */
+@media (max-width: 760px) {
+  body { padding-inline: 16px; }
+  :root { --pad: 4px; }
+  .cols-head { display: none; }
+  .row-head, .overall {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "years where result"
+      "role role role"
+      "time time time";
+    row-gap: 6px;
+    column-gap: 12px;
+  }
+  .c-years { grid-area: years; }
+  .c-where { grid-area: where; flex-direction: row; flex-wrap: wrap; gap: 0 8px; align-items: baseline; }
+  .c-role { grid-area: role; }
+  .c-time { grid-area: time; height: 14px; }
+  .c-result { grid-area: result; }
+  .row.open .c-role { transform: none; }
+  .detail-in { display: block; }
+  .detail-in p { padding: 0 0 18px; }
+  .axis { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: 0s !important; transition-delay: 0s !important; }
+}
