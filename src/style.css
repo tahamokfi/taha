@@ -1,15 +1,16 @@
-/* One journal figure: title block, a career timeline drawn as a forest plot, a quiet footer.
+/* Profile card on the left, career timeline (a forest plot) on the right; one column on phones.
    Light and dark share every rule; only the tokens change. */
 :root {
   color-scheme: light;
   --bg: #f7f8fa;
+  --surface: #ffffff;
   --band: #eceff4;
   --rule: #dce1e8;
   --muted: #646e80;
   --soft: #3d4655;
   --ink: #0f1522;
   --bar: #9aa3b2;
-  --accent: #e0a030;      /* bars, diamond, logo square */
+  --accent: #e0a030;      /* bars, diamond */
   --accent-ink: #8a5806;  /* amber text, darker so it reads on white */
   --tile: #ffffff;
   --tile-line: #dfe3ea;
@@ -24,14 +25,15 @@
   --now: 2026.8;
   --span: calc(var(--y1) - var(--y0));
 
-  --cols: 72px minmax(190px, 240px) minmax(0, 1fr) minmax(170px, 25%) 132px;
-  --pad: 12px;
+  --cols: minmax(180px, 215px) minmax(0, 1fr) minmax(150px, 26%) 112px;
+  --pad: 10px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --bg: #0a0d13;
-    --band: #121825;
+    --surface: #10141d;
+    --band: #151b28;
     --rule: #232b39;
     --muted: #8a94a6;
     --soft: #bfc7d3;
@@ -46,7 +48,8 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #0a0d13;
-  --band: #121825;
+  --surface: #10141d;
+  --band: #151b28;
   --rule: #232b39;
   --muted: #8a94a6;
   --soft: #bfc7d3;
@@ -65,8 +68,8 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 17px;
-  line-height: 1.55;
+  font-size: 16px;
+  line-height: 1.5;
   padding-inline: 20px;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s, color 0.3s;
@@ -75,28 +78,30 @@ a { color: var(--ink); text-decoration: none; border-bottom: 1.5px solid var(--a
 a:hover { color: var(--accent-ink); }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-.fig {
-  max-width: 1140px;
-  margin: 0 auto;
-  padding-block: 20px 32px;
-  display: grid;
-  gap: clamp(28px, 5vh, 48px);
-  overflow-x: clip;
-}
+.page { max-width: 1180px; margin: 0 auto; padding-block: 18px 28px; overflow-x: clip; }
 
-/* ---------- top bar: logo and theme switch ---------- */
-.topbar { display: flex; align-items: center; justify-content: space-between; }
-.brand { display: inline-flex; align-items: center; gap: 10px; border: 0; padding: 0; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--soft); }
+/* ---------- top bar: monogram and theme switch ---------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; border: 0; padding: 0; font-family: var(--mono); font-size: 13px; color: var(--soft); }
 .brand:hover { color: var(--ink); }
-.mark { width: 30px; height: 30px; flex: none; }
-.mark path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
-.mark rect { fill: var(--accent); }
-.brand .mark { color: var(--ink); }
+.monogram {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
 .theme-toggle {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   padding: 0;
   border: 1px solid var(--rule);
   border-radius: 999px;
@@ -108,68 +113,91 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 .js .theme-toggle { visibility: visible; }
 .theme-toggle:hover { border-color: var(--muted); background: var(--band); }
-.theme-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.theme-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .i-sun { display: none; }
 [data-theme="dark"] .i-sun { display: block; }
 [data-theme="dark"] .i-moon { display: none; }
 
-/* ---------- title block ---------- */
+/* ---------- two columns ---------- */
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 48px; align-items: start; }
+
+/* ---------- profile card ---------- */
+.card {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  background: var(--surface);
+}
+/* LinkedIn only publishes the photo at 200px, so it is shown no larger than that to stay sharp */
+.photo {
+  width: 128px;
+  aspect-ratio: 1;
+  max-width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--band);
+  display: grid;
+  place-items: center;
+}
+.photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.intro { display: grid; gap: 10px; }
 .name {
   margin: 0;
   font-family: var(--serif);
-  font-weight: 380;
-  font-size: clamp(48px, 12vw, 136px);
-  line-height: 0.9;
-  letter-spacing: -0.03em;
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
   font-variation-settings: "opsz" 72;
   transform-origin: left center;
-  animation: converge 1.8s cubic-bezier(0.16, 0.8, 0.2, 1) both;
+  animation: converge 1.6s cubic-bezier(0.16, 0.8, 0.2, 1) both;
 }
 /* blur and stretch only, so the name never reflows while it settles */
 @keyframes converge {
-  from { filter: blur(14px); opacity: 0.25; transform: scaleX(1.12); }
+  from { filter: blur(12px); opacity: 0.25; transform: scaleX(1.1); }
   to { filter: blur(0); opacity: 1; transform: none; }
 }
-.sub {
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 10px 28px;
-  font-size: 17px;
+.facts { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; color: var(--soft); }
+.facts strong { color: var(--ink); font-weight: 600; }
+.bio { margin: 0; color: var(--soft); line-height: 1.55; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.links a {
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: border-color 0.2s, background-color 0.2s;
 }
-.sub p { margin: 0; color: var(--soft); }
-.sub nav { display: flex; gap: 22px; font-weight: 600; }
-.legend {
-  margin: 18px 0 0;
-  max-width: 62ch;
-  font-size: 18px;
-  line-height: 1.6;
-  color: var(--soft);
-}
-.legend b {
+.links a:hover { border-color: var(--accent); background: var(--band); color: var(--ink); }
+
+/* ---------- plot ---------- */
+.caption { margin: 0 0 14px; font-size: 15px; color: var(--soft); }
+.caption b {
   font-family: var(--mono);
   font-weight: 500;
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent-ink);
   margin-right: 10px;
 }
-
-/* ---------- plot grid ---------- */
 .grid {
   display: grid;
   grid-template-columns: var(--cols);
-  column-gap: 20px;
+  column-gap: 18px;
   align-items: center;
   padding-inline: var(--pad);
 }
 .cols-head {
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--rule);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -180,11 +208,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .chapters { list-style: none; margin: 0; padding: 0; }
 .row { border-bottom: 1px solid var(--rule); transition: background-color 0.25s; }
 .row.open { background: var(--band); }
-
 .row-head {
   width: 100%;
   margin: 0;
-  padding-block: 14px;
+  padding-block: 10px;
   border: 0;
   background: none;
   color: inherit;
@@ -197,13 +224,12 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   .row-head:hover { background: var(--band); }
 }
 
-.c-years { font-family: var(--mono); font-size: 14px; color: var(--soft); font-variant-numeric: tabular-nums; }
-.c-where { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.c-where { display: flex; align-items: center; gap: 11px; min-width: 0; }
 .where-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
-.org { font-size: 16px; font-weight: 600; }
-.city { font-size: 14px; color: var(--muted); }
-.c-role { min-width: 0; font-size: 17px; transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), color 0.25s; }
-.row-head .c-result { font-family: var(--mono); font-size: 14px; color: var(--soft); transition: color 0.25s; }
+.org { font-size: 15.5px; font-weight: 600; }
+.meta { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.c-role { min-width: 0; font-size: 16px; transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), color 0.25s; }
+.row-head .c-result { font-family: var(--mono); font-size: 13.5px; color: var(--soft); transition: color 0.25s; }
 .row[data-current] .c-result, .row.open .c-result { color: var(--accent-ink); }
 
 /* company logos sit on a white tile in both themes, so every mark reads as designed */
@@ -211,21 +237,20 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   flex: none;
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: var(--tile);
   box-shadow: inset 0 0 0 1px var(--tile-line);
   overflow: hidden;
 }
 .logo img { width: 72%; height: 72%; object-fit: contain; }
 .logo.full img { width: 100%; height: 100%; object-fit: cover; }
-.logo.mono { font-family: var(--serif); font-size: 20px; font-weight: 500; line-height: 1; color: #0f1522; }
-.logo.site { background: var(--ink); box-shadow: none; }
-.logo.site .mark { width: 26px; height: 26px; color: var(--bg); }
+.logo.mono { font-family: var(--serif); font-size: 19px; font-weight: 500; line-height: 1; color: #0f1522; }
+.logo.site { background: var(--ink); box-shadow: none; color: var(--bg); font-family: var(--serif); font-size: 14px; font-weight: 500; letter-spacing: -0.02em; }
 
 /* the timeline track and one bar per chapter */
-.c-time { position: relative; height: 20px; }
+.c-time { position: relative; height: 18px; }
 .row-head .c-time::before {
   content: "";
   position: absolute;
@@ -256,12 +281,12 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 /* detail opens under the role; without JavaScript it simply stays open */
 .detail-in { min-height: 0; overflow: hidden; }
 .detail-in p {
-  grid-column: 3 / 5;
+  grid-column: 2 / 5;
   margin: 0;
-  padding: 0 0 20px 6px;
-  max-width: 66ch;
-  font-size: 16px;
-  line-height: 1.65;
+  padding: 0 0 16px 6px;
+  max-width: 64ch;
+  font-size: 15.5px;
+  line-height: 1.6;
   color: var(--soft);
 }
 .js .detail {
@@ -279,10 +304,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .js .row.open .detail-in p { opacity: 1; transform: none; transition-delay: 0.06s; }
 
 /* overall: the whole span, drawn as the pooled diamond */
-.overall { padding-block: 16px; border-bottom: 1px solid var(--rule); }
+.overall { padding-block: 12px; border-bottom: 1px solid var(--rule); }
 .overall .org { color: var(--accent-ink); }
-.overall .c-role { font-size: 17px; font-weight: 600; }
-.overall .c-result { font-family: var(--mono); font-size: 14px; color: var(--accent-ink); }
+.overall .c-role { font-weight: 600; }
+.overall .c-result { font-family: var(--mono); font-size: 13.5px; color: var(--accent-ink); }
 .diamond {
   position: absolute;
   top: 50%;
@@ -295,24 +320,26 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 
 /* time axis, Tehran to New York */
-.axis .c-time { grid-column: 4; height: auto; }
-.ticks { position: relative; display: block; height: 30px; border-top: 1px solid var(--muted); }
+.axis .c-time { grid-column: 3; height: auto; }
+.ticks { position: relative; display: block; height: 28px; border-top: 1px solid var(--muted); }
 .tick {
   position: absolute;
   top: 0;
   left: calc((var(--t) - var(--y0)) / var(--span) * 100%);
   transform: translateX(-50%);
-  padding-top: 9px;
+  padding-top: 8px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--muted);
 }
 .tick::before { content: ""; position: absolute; top: 0; left: 50%; width: 1px; height: 5px; background: var(--muted); }
+.tick.first { transform: none; }
+.tick.first::before { left: 0; }
 .ends {
   display: flex;
   justify-content: space-between;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11.5px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--soft);
@@ -323,35 +350,63 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px 24px;
+  margin-top: 32px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
   font-family: var(--mono);
   font-size: 13px;
   color: var(--muted);
 }
 
-/* ---------- phones and narrow windows ---------- */
-@media (max-width: 760px) {
-  body { padding-inline: 16px; }
+/* ---------- tablets: card on top, table full width ---------- */
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .card {
+    position: static;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "photo intro"
+      "bio bio"
+      "links links";
+    align-items: center;
+    gap: 16px 20px;
+  }
+  .photo { grid-area: photo; }
+  .intro { grid-area: intro; }
+  .bio { grid-area: bio; }
+  .links { grid-area: links; }
+  .photo { width: 112px; }
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 640px) {
+  body { padding-inline: 14px; }
   :root { --pad: 4px; }
+  .topbar { margin-bottom: 18px; }
+  .card { grid-template-columns: 84px minmax(0, 1fr); padding: 16px; gap: 14px 16px; border-radius: 16px; }
+  .photo { width: 84px; border-radius: 12px; }
+  .name { font-size: 34px; }
+  .facts { font-size: 15px; }
+  .bio { font-size: 15.5px; }
+  .caption { font-size: 14px; }
   .cols-head { display: none; }
   .row-head, .overall {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       "where result"
-      "role years"
+      "role role"
       "time time";
-    row-gap: 8px;
+    row-gap: 6px;
     column-gap: 12px;
   }
-  .c-years { grid-area: years; justify-self: end; font-size: 13px; color: var(--muted); }
   .c-where { grid-area: where; gap: 10px; }
-  .where-text { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
-  .logo { width: 30px; height: 30px; border-radius: 8px; }
-  .c-role { grid-area: role; }
-  .c-time { grid-area: time; height: 14px; }
+  .logo { width: 30px; height: 30px; }
+  .c-role { grid-area: role; font-size: 15.5px; }
+  .c-time { grid-area: time; height: 12px; }
   .c-result { grid-area: result; }
   .row.open .c-role { transform: none; }
   .detail-in { display: block; }
-  .detail-in p { padding: 0 0 18px; }
+  .detail-in p { padding: 0 0 14px; font-size: 15px; }
   .axis { display: block; }
 }
 

@@ -51,15 +51,15 @@ const y1 = Math.max(2027, Math.ceil(now + 0.25));
 root.style.setProperty('--now', now.toFixed(3));
 root.style.setProperty('--y1', String(y1));
 
-const copyright = document.querySelector('.foot span');
+const copyright = document.getElementById('copyright');
 if (copyright) copyright.textContent = `© ${today.getFullYear()} Taha Mokfi`;
 
-// Axis ticks every three years.
+// Axis ticks every five years; the first label sits flush with the start of the axis.
 const ticks = document.getElementById('ticks');
 if (ticks) {
-  for (let year = y0; year < y1; year += 3) {
+  for (let year = y0; year < y1; year += 5) {
     const tick = document.createElement('span');
-    tick.className = 'tick';
+    tick.className = year === y0 ? 'tick first' : 'tick';
     tick.style.setProperty('--t', String(year));
     tick.textContent = String(year);
     ticks.append(tick);
