@@ -1,4 +1,8 @@
+import { inject } from '@vercel/analytics';
 import './style.css';
+
+// Vercel Web Analytics: cookieless page views, only reported from the deployed site.
+inject();
 
 const root = document.documentElement;
 root.classList.add('js');
